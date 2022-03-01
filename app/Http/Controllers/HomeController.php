@@ -28,7 +28,7 @@ class HomeController extends Controller
         $user =\Auth::user();
         //メモ一覧を取得 DESC降順 ASC昇順
         $memos = Memo::where('user_id',$user['id'])->where('status',1)->orderBy('updated_at','DESC')->get();
-        dd($memos);
+        // dd($memos);
         return view('home',compact('user','memos'));
     }
     
