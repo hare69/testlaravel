@@ -37,14 +37,15 @@ class HomeController extends Controller
     {
         //ログインしているユーザー情報をviewに渡す
         $user =\Auth::user();
-        return view('create',compact('user'));
+        $memos = Memo::where('user_id',$user['id'])->where('status',1)->orderBy('updated_at','DESC')->get();
+        return view('create',compact('user','memos'));
     }
 
 
     public function store(Request $request)
     {
         $data = $request->all();
-        // dd($data);
+        dd($data);
         // POSTされたデータをDB（memosテーブル）に挿入
         // MEMOモデルにDBへ保存する命令を出す
 
@@ -56,6 +57,29 @@ class HomeController extends Controller
         ]);
         
         // リダイレクト処理
+        return redirect()->route('home');
+    }
+
+    public function edit($id){
+        // 該当するIDのメモをデータベースから取得
+        $user = \Auth::user();
+        $memo = Memo::where('status', 1)->where('id', $id)->where('user_id', $user['id'])
+          ->first();
+        //   dd($memo);
+        $memos = Memo::where('user_id',$user['id'])->where('status',1)->orderBy('updated_at','DESC')->get();
+        //取得したメモをViewに渡す
+        return view('edit',compact('memo','user','memos'));
+
+
+
+    }
+
+
+    public function update(Request $request,$id)
+    {
+        $inputs = $request->all();
+        // dd($inputs);
+        Memo::where('id',$id)->update(['content'=> $inputs['content']]);
         return redirect()->route('home');
     }
     
